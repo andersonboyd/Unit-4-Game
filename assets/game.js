@@ -54,7 +54,6 @@ function restartGame(){
 
 $(document).ready(function(){
     var guy1 = $("#firstGuy");
-    console.log(guy1);
     guy1.text(char.name);
     guy1.append("<br><img src='assets/images/ben_kenobi.png' style='width:70%;height:70%;'></img><br>")
     guy1.append(char.hp);
@@ -91,7 +90,5 @@ $(document).ready(function(){
             oppo.append(guy4);
         });
     }
-
-
 
 });
