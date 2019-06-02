@@ -1,21 +1,35 @@
-// we have four choices in the fighters div. each choice has hp, attack, counter set vars.
-// when a player chooses their fighter, the remaining choices move into the enemies available div.
-// the player then chooses an enemy. their fighter and the enemy fighter move into the fight box div.
-// we will probably need .animate() when fighter is selected (change color etc.)
+class Fighter {
+    constructor(id, maxPower = 10, counterFactor = 1.0) {
+        this.elem = $(`#${id}`);
+        this.name = $(`#${id} h3.name`).text();
+        this.hp = $(`#${id} h3.health`);
+        this.power = this.attackPower(maxPower);
+        this.counter = this.counterAttackPower(counterFactor);
+    }
 
-// game has five vars: hp, attack, counter, wins, losses
-// health is constant. counter is constant. attack +6 on each button press. wins++ loss++ based on game result.
+    attackPower(max = 10, base = 3) {
+        return Math.floor(Math.random()*(max-base)) + base;
+    }
 
-// once fighter and enemy are in fight box, attack button pops up
-//  attack button: takes attack var and subtracts it from enemy hp, 
-//                 takes counter var and subtracts from player hp.
+    counterAttackPower(factor = 1.0) {
+        return Math.floor(this.power * factor);
+    }
 
-// if enemy hp reaches zero, player chooses new enemy. game function runs again.
-// this happens until no enemies are left. at that point, player wins. wins counter increases. game resets.
-// if player hp reaches zero, player loses. loss counter increases. game resets.
+    outOfHealth() {
+        if(this.healthPoints < 0) {
+            this.healthPoints = 0;
+        }
+        return (this.healthPoints === 0);
+    }
 
-// we will need game function, reset function, div mover function? (so at least two)
-// first let's get the character divs on the page and see if we can't move them around
+    set healthPoints(point){
+        this.hp.text(point);
+    }
+    
+    get healthPoints() {
+        return parseInt(this.hp.text());
+    }
+}
 
 function run(game) {
     $(".charBox").on("click", game, game.setup);
@@ -37,7 +51,7 @@ class Game {
 
     setup(event) {
         var sectionName = $(this).parent().attr("id");
-        console.log($(this).attr("id") + "is clicked");
+        console.log($(this).attr("id") + " is clicked");
         console.log("parent: " + $(this).parent().attr("id"));
 
         if(sectionName === "row"){
@@ -51,7 +65,7 @@ class Game {
         else if(sectionName === "enemySection"){
             if(!event.data.enemy){
                 event.data.enemy = $(this).attr("id");
-                console.log("You have selected " + $(this).attr("id") + "as your opponent");
+                console.log("You have selected " + $(this).attr("id") + " as your opponent");
                 $(this).addClass("charBox-defender");
                 $(this).appendTo("#defendSection");
             }
@@ -65,7 +79,7 @@ class Game {
             thisFight.attacker = new Fighter(thisFight.player, 10, 1.0);
         }
         if(thisFight.enemy && !thisFight.defender){
-            thisFight.defender = new Fighter(thisFight.enemy, 10, 1.8);
+            thisFight.defender = new Fighter(thisFight.enemy, 10, 1.0);
         }
         if(!thisFight.attacker || !thisFight.defender || thisFight.isOver) {
             if(!thisFight.attacker){
@@ -155,38 +169,5 @@ class Game {
         $(".health").each(function(){
             this.innerText = Math.floor(Math.random()*70) + 100;
         });
-    }
-}
-
-class Fighter {
-    constructor(id, maxPower = 10, counterFactor = 1.0) {
-        this.elem = $(`#${id}`);
-        this.name = $(`#${id} h3.name`).text();
-        this.hp = $(`#${id} h3.health`);
-        this.power = this.attackPower(maxPower);
-        this.counter = this.counterAttackPower(counterFactor);
-    }
-
-    attackPower(max = 10, base = 3) {
-        return Math.floor(Math.random()*(max-base)) + base;
-    }
-
-    counterAttackPower(factor = 1.0) {
-        return Math.floor(this.power * factor);
-    }
-
-    outOfHealth() {
-        if(this.healthPoints < 0) {
-            this.healthPoints = 0;
-        }
-        return (this.healthPoints === 0);
-    }
-
-    set healthPoints(point){
-        this.hp.text(point);
-    }
-    
-    get healthPoints() {
-        return parseInt(this.hp.text());
     }
 }
