@@ -3,13 +3,13 @@
 }
 
 body {
-    background: url("assets/images/death_star.jpg") gainsboro;
-    color: #666666;
+    background: url("../assets/images/death_star.jpg") rgb(0, 0, 0);
+    color: #d1d0d0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h1 {
-    font-size: 1.5em;
+    font-size: 2em;
     margin-left: 65%;
 }
 
@@ -26,13 +26,14 @@ h3 {
 .charBox {
     display: inline-block;
     background: #ffffff;
+    color: #000000;
     margin: 0.2%;
     padding: 0.2rem 0.1rem;
 }
 
 .image {
-    width: 100px;
-    height: 70px;
+    width: 115px;
+    height: 75px;
 }
 
 #player, #defenderSection {
