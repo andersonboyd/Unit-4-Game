@@ -1,48 +1,59 @@
-header {
-    text-align: center;
-    font-size: 30px;
+* {
+    box-sizing: border-box;
 }
 
-#firstGuy {
-    width: 125px;
-    height: 100px;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid black;
-    position: relative;
-    display: inline-block;
-    text-align: center;
+html {
+    background-image: url("assets/images/deathstar.jpg");
 }
 
-#secondGuy {
-    width: 125px;
-    height: 100px;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid black;
-    position: relative;
-    display: inline-block;
-    text-align: center;
+body {
+    color: #666666;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#thirdGuy {
-    width: 125px;
-    height: 100px;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid black;
-    position: relative;
-    display: inline-block;
-    text-align: center;
+h1 {
+    font-size: 1.5em;
+    margin-left: 65%;
 }
 
-#fourthGuy {
-    width: 125px;
-    height: 100px;
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid black;
-    position: relative;
-    display: inline-block;
+h2 {
+    font-size: 1.2em;
+    margin: 0.3rem;
+}
+
+h3 {
     text-align: center;
+    font-size: 1em;
+}
+
+.charBox {
+    display: inline-block;
+    background: #ffffff;
+    margin: 0.2%;
+    padding: 0.2rem 0.1rem;
+}
+
+.image {
+    width: 100px;
+    height: 70px;
+}
+
+#player, #defenderSection {
+    height: 115px;
+}
+
+.charBox-player {
+    border: 3px solid green;
+}
+
+.charBox-enemy {
+    background: red;
+    color: black;
+    border: "none";
+}
+
+.charBox-defender {
+    background: black;
+    color: white;
+    border: 3px solid green;
 }

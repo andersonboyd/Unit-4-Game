@@ -8,20 +8,55 @@
     <link rel="stylesheet" type="text/css" href="assets/reset.css">
     <link rel="stylesheet" type="text/css" href="assets/style.css">
     <script type="text/Javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="assets/game.js"></script>
 </head>
 <body>
     <header>
-        <h1>Star Wars Game!</h1>
+        <h1 id="title">Star Wars Game!</h1>
     </header>
-    <div class="fighters">
-        <div id="firstGuy"></div>
-        <div id="secondGuy"></div>
-        <div id="thirdGuy"></div>
-        <div id="fourthGuy"></div>
-    </div>
-    Choose your opponent!<br><div id="enemiesAvailable"></div>
-    Fight section<br><div id="fightBox"></div>
-    Opponent<br><div id="defenderArea"></div>
-    <script src="assets/game.js"></script>
+    <section>
+        <div id="row">
+            <div id="kenobi" class="charBox">
+                <h3 class="name">Obi-Wan Kenobi</h3>
+                <img src="assets/images/Ben_Kenobi.png" alt="Obi-Wan" class="image">
+                <h3 class="health">160</h3>
+            </div>
+            <div id="windu" class="charBox">
+                <h3 class="name">Mace Windu</h3>
+                <img src="assets/images/windu.jpg" alt="Mace" class="image">
+                <h3 class="health">150</h3>
+            </div>
+            <div id="yoda" class="charBox">
+                <h3 class="name">Yoda</h3>
+                <img src="assets/images/yoda.jpg" alt="Yoda" class="image">
+                <h3 class="health">100</h3>
+            </div>
+            <div id="vader" class="charBox">
+                <h3 class="name">Darth Vader</h3>
+                <img src="assets/images/vader.jpg" alt="Anakin" class="image">
+                <h3 class="health">170</h3>
+            </div>
+        </div>
+        <h2>Your Character</h2>
+        <div id="player"></div>
+        <h2>Enemies Available:</h2>
+        <div id="enemySection"></div>
+        <h2>Fight Section</h2>
+        <div id="fightBox"></div>
+        <button id="attack">Attack</button>
+        <h2>Defender</h2>
+        <div id="defendSection"></div>
+        <p id="msg1"></p>
+        <p id="msg2"></p>
+        
+        <button id="restart">Restart</button>
+        <br>
+    </section>
+    <script>
+        $(document).ready(function(){
+            var rpgGame = new Game();
+            run(rpgGame);
+        })
+    </script>
 </body>
 </html>

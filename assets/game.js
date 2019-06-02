@@ -1,6 +1,7 @@
 // we have four choices in the fighters div. each choice has hp, attack, counter set vars.
 // when a player chooses their fighter, the remaining choices move into the enemies available div.
 // the player then chooses an enemy. their fighter and the enemy fighter move into the fight box div.
+// we will probably need .animate() when fighter is selected (change color etc.)
 
 // game has five vars: hp, attack, counter, wins, losses
 // health is constant. counter is constant. attack +6 on each button press. wins++ loss++ based on game result.
@@ -16,79 +17,176 @@
 // we will need game function, reset function, div mover function? (so at least two)
 // first let's get the character divs on the page and see if we can't move them around
 
-var char = {
-    name: "Fighter 1",
-    hp: 1000,
-    attack: 60,
-    counter: 120
-};
-
-var charTwo = {
-    name: "Fighter 2",
-    hp: 1000,
-    attack: 80,
-    counter: 110
-};
-
-var charThree = {
-    name: "Fighter 3",
-    hp: 800,
-    attack: 90,
-    counter: 120
-};
-
-var charFour = {
-    name: "Fighter 4",
-    hp: 1200,
-    attack: 90,
-    counter: 150
-};
-
-var enemies = $("#enemiesAvailable");
-var fight = $("#fightBox");
-var oppo = $("#defenderArea");
-
-function restartGame(){
-    location.reload();
+function run(game) {
+    $(".charBox").on("click", game, game.setup);
+    $("#attack").on("click", game, game.fight);
+    $("#restart").hide();
+    $("#restart").on("click", game, game.restart);
 }
 
-$(document).ready(function(){
-    var guy1 = $("#firstGuy");
-    guy1.text(char.name);
-    guy1.append("<br><img src='assets/images/ben_kenobi.png' style='width:70%;height:70%;'></img><br>")
-    guy1.append(char.hp);
-
-    var guy2 = $("#secondGuy");
-    guy2.text(charTwo.name);
-    guy2.append("<br><img src='assets/images/windu.jpg' style='width:70%;height:70%;'></img><br>")
-    guy2.append(charTwo.hp);
-
-    var guy3 = $("#thirdGuy");
-    guy3.text(charThree.name);
-    guy3.append("<br><img src='assets/images/yoda.jpg' style='width:70%;height:70%;'></img><br>")
-    guy3.append(charThree.hp);
-
-    var guy4 = $("#fourthGuy");
-    guy4.text(charFour.name);
-    guy4.append("<br><img src='assets/images/vader.jpg' style='width:70%;height:70%;'></img><br>")
-    guy4.append(charFour.hp);
-
-    guy1.click(function(){
-        enemies.append(guy2);
-        enemies.append(guy3);
-        enemies.append(guy4);
-    });
-    
-    if(enemies !== -1){
-        guy2.click(function(){
-            oppo.append(guy2);
-        });
-        guy3.click(function(){
-            oppo.append(guy3);
-        });
-        guy4.click(function(){
-            oppo.append(guy4);
-        });
+class Game {
+    constructor() {
+        this.player = null;
+        this.enemy = null;
+        this.attacker = null;
+        this.defender = null;
+        this.attackCounter = 0;
+        this.isOver = false;
+        this.charBoxes = [];
     }
 
-});
+    setup(event) {
+        var sectionName = $(this).parent().attr("id");
+        console.log($(this).attr("id") + "is clicked");
+        console.log("parent: " + $(this).parent().attr("id"));
+
+        if(sectionName === "row"){
+            event.data.player = $(this).attr("id");
+            console.log("You have selected "+$(this).attr("id"));
+            $(this).addClass("charBox-player");
+            $(this).appendTo("#player");
+            $("#row > .charBox").addClass("charBox-enemy");
+            $("#row > .charBox").appendTo("#enemySection");
+        }
+        else if(sectionName === "enemySection"){
+            if(!event.data.enemy){
+                event.data.enemy = $(this).attr("id");
+                console.log("You have selected " + $(this).attr("id") + "as your opponent");
+                $(this).addClass("charBox-defender");
+                $(this).appendTo("#defendSection");
+            }
+        }
+    }
+
+    fight(event) {
+        var thisFight = event.data;
+
+        if(thisFight.player && !thisFight.attacker) {
+            thisFight.attacker = new Fighter(thisFight.player, 10, 1.0);
+        }
+        if(thisFight.enemy && !thisFight.defender){
+            thisFight.defender = new Fighter(thisFight.enemy, 10, 1.8);
+        }
+        if(!thisFight.attacker || !thisFight.defender || thisFight.isOver) {
+            if(!thisFight.attacker){
+                $("#msg1").text("Please select your character");
+            }
+            else if(!thisFight.isOver && !thisFight.defender){
+                $("#msg1").text("Please select your opponent");
+            }
+            return;
+        }
+
+        thisFight.attackCounter++;
+        var damage = thisFight.attack();
+        thisFight.displayMessage(damage);
+
+        if(thisFight.defender.outOfHealth()) {
+            thisFight.charBoxes.push(thisFight.defender.elem.detach());
+            thisFight.defender = null;
+            thisFight.enemy = null;
+        }
+    }
+
+    attack() {
+        var damage = this.attacker.power * this.attackCounter;
+        this.defender.healthPoints -= damage;
+
+        if(!this.defender.outOfHealth()){
+            this.attacker.healthPoints -= this.defender.counter;
+            if(this.attacker.outOfHealth()){
+                this.isOver = true;
+            }
+        }
+        return damage;
+    }
+
+    displayMessage(damage) {
+        this.clearMsg();
+        if(this.defender.outOfHealth()) {
+            if (this.remainingEnemies() === 0){
+                $("#msg1").text("You win!");
+                $("#restart").show();
+                this.isOver = true;
+            }
+            else{
+                $("#msg1").text(`You have defeated ${this.defender.name}. You may choose another opponent.`)
+            }
+        }
+        else if (this.attacker.outOfHealth()){
+            $("#msg1").text("You have been defeated. Game over...");
+            $("#restart").show();
+            this.isOver = true;
+        }
+        else {
+            $("#msg1").text(`You attacked ${this.defender.name} for ${damage} damage.`);
+            $("#msg2").text(`${this.defender.name} attacked you back for ${this.defender.counter} damage.`);
+        }
+    }
+
+    clearMsg(){
+        $("#msg1").text("");
+        $("#msg2").text("");
+    }
+
+    remainingEnemies(){
+        return $("#enemySection > .charBox").length;
+    }
+
+    restart(event){
+        var thisGame = event.data;
+        ['player', 'enemy', 'attacker', 'defender'].forEach(function(e) {
+            thisGame[e] = null;
+        });
+        thisGame.attackCounter = 0;
+        thisGame.isOver = false;
+        thisGame.clearMsg();
+        $("#restart").hide();
+        thisGame.resetCharData();
+    }
+
+    resetCharData() {
+        for(var i=0; i<this.charBoxes.length; i++){
+            this.charBoxes[i].appendTo($("#row"));
+        }
+        $(".charBox").appendTo("#row");
+        $(".charBox").removeClass("charBox-player charBox-enemy charBox-defender");
+        $(".charBox").addClass("charBox");
+        $(".health").each(function(){
+            this.innerText = Math.floor(Math.random()*70) + 100;
+        });
+    }
+}
+
+class Fighter {
+    constructor(id, maxPower = 10, counterFactor = 1.0) {
+        this.elem = $(`#${id}`);
+        this.name = $(`#${id} h3.name`).text();
+        this.hp = $(`#${id} h3.health`);
+        this.power = this.attackPower(maxPower);
+        this.counter = this.counterAttackPower(counterFactor);
+    }
+
+    attackPower(max = 10, base = 3) {
+        return Math.floor(Math.random()*(max-base)) + base;
+    }
+
+    counterAttackPower(factor = 1.0) {
+        return Math.floor(this.power * factor);
+    }
+
+    outOfHealth() {
+        if(this.healthPoints < 0) {
+            this.healthPoints = 0;
+        }
+        return (this.healthPoints === 0);
+    }
+
+    set healthPoints(point){
+        this.hp.text(point);
+    }
+    
+    get healthPoints() {
+        return parseInt(this.hp.text());
+    }
+}
