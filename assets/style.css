@@ -2,11 +2,8 @@
     box-sizing: border-box;
 }
 
-html {
-    background-image: url("assets/images/deathstar.jpg");
-}
-
 body {
+    background: url("assets/images/death_star.jpg") gainsboro;
     color: #666666;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
